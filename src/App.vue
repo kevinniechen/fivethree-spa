@@ -158,18 +158,18 @@
 				<div class="tile">
 
 				  <div class="tile is-parent is-vertical">
-					<article class="tile is-child notification is-primary">
+					<article class="tile is-child notification" style="background-color: #EEEEEE">
 					  <p class="title">Phone</p>
 					  <p class="subtitle">{{selectedBusiness.display_phone}}</p>
 					</article>
-					<article class="tile is-child notification is-warning">
+					<article class="tile is-child notification" style="background-color: #ECF0F1">
 					  <p class="title">Address</p>
 					  <p class="subtitle">{{selectedBusiness.location.display_address[0]}}</p>
 					</article>
 				  </div>
 
 				  <div class="tile is-parent">
-					<article class="tile is-child notification is-info">
+					<article class="tile is-child notification" style="background-color: #ECF0F1">
 					  <p class="title">{{selectedBusiness.name}}</p>
 					  <figure class="image is-4by3">
 						<img :src="selectedBusiness.image_url">
@@ -178,7 +178,7 @@
 				  </div>
 				</div>
 				<div class="tile is-parent">
-				  <article class="tile is-child notification is-danger">
+				  <article class="tile is-child notification" style="background-color: #ECECEC">
 					<p class="title">Review Count</p>
 					<p class="subtitle">{{selectedBusiness.review_count}}</p>
 					<div class="content">
@@ -188,12 +188,26 @@
 				</div>
 			  </div>
 			  <div class="tile is-parent">
-				<article class="tile is-child notification is-success">
+				<article class="tile is-child notification" style="background-color: #F2F1EF">
 				  <div class="content">
-					<p class="title">Tall tile</p>
-					<p class="subtitle">With even more content</p>
+					<p class="title"><strong>About FiveThree</strong></p>
+					<p class="subtitle"></p>
 					<div class="content">
-
+						FiveThree was designed to help you find your next meal
+						quickly and easily!
+						<br><br> 
+						After typing in your location, we present five choices
+						that are ranked by Yelp as
+						the top categories in your area. You click three, and we show the matching
+						restaurants on the top nav bar, and highlight their locations with a gold
+						marker. Other locations (denoted by red) are also available on the map.
+						Additional information about the current restaurant you are looking at will pop up
+						on the bottom nav bar (and will directly link to the information sources)
+						and on the bottom tiles.
+						<br><br>
+						This was developed for the <a href="https://www.mindsumo.com/contests/restaurant-api">
+						CapitalOne MindSumo Challenge,</a> for a chance at being invited to the
+						Capital One Software Engineer Summit.</p>
 					</div>
 				  </div>
 				</article>
@@ -334,8 +348,8 @@ export default {
 		clickMarker(business) {
 			this.center = {lat:business.coordinates.latitude, lng:business.coordinates.longitude};
 			this.selectedBusiness = business;
+			this.zoom = 13;
 			this.zoom = 14;
-			this.zoom = 16;
 			/* Select business panel */
 		},
 		addSelectedImage(index) {
