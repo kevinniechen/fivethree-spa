@@ -1,8 +1,10 @@
-# FindThree SPA Frontend
-SPA Frontend for my submission for the [MindSumo CapitalOne Restaurant Recommender challenge](https://www.mindsumo.com/contests/restaurant-api)
+# FiveThree SPA Frontend
+SPA Frontend for my submission for the [MindSumo CapitalOne Restaurant Challenge](https://www.mindsumo.com/contests/restaurant-api)
 
 ## Deployment
 This is deployed statically on a CDN (Netlify).
+
+[Backend API server](https://github.com/kevchn/threefive-api)
 
 ## Local Deployment
 To run this locally, simply install the requirements and then run npm run dev.
