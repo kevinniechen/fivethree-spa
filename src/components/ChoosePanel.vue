@@ -12,7 +12,7 @@
 	  		</div> -->
 	  		<div class="card-content" :class="{'select-card': selected}">
 	  			<div class="content">
-	  				{{categories[index]}}
+	  				{{ category }}
 	  			</div>
 	  		</div>
 	  	</div>
@@ -25,7 +25,7 @@
 <script>
 export default{
 	name:'choose-panel',
-	props: ['index','imageFlipped','categories'],
+	props: ['index', 'category', 'imageFlipped'],
 	data: function(){
 		return{
 			selected: false

@@ -16,7 +16,7 @@
 					<span></span>
 				</span>
 				<div class="nav-right nav-menu">
-					<a class="nav-item" href="https://github.com/kevchn">Source Code</a>
+					<a class="nav-item" href="https://github.com/kevchn/threefive-spa">Source Code</a>
 				</div>
 			</div>
 		</nav>
@@ -48,8 +48,8 @@
 
 				<!-- CATEGORY INPUT -->
 				<div class="columns">
-					<div class="column" v-for="business, index in filteredBusinesses">
-						<choose-panel :categories="fiveCategories" :index="index" :key="index" v-on:addSelection="addSelectedImage(index)" v-on:removeSelection="removeSelectedImage(index)"></choose-panel>
+					<div class="column" v-for="category, index in parsedCategories">
+						<choose-panel :category="category" :index="index" :key="index" v-on:addSelection="addSelectedImage(index)" v-on:removeSelection="removeSelectedImage(index)"></choose-panel>
 					</div>
 				</div>
 			</div>
@@ -221,11 +221,14 @@ export default {
 			location: 'NYC',
 			center: {},
 			prevQueryString: '',
-			businesses: [],
 			searching: false,
 			statusBackup: '',
 			statusText: '',
+			businesses: [],
+			filteredBusinesses: [],
 			selectedBusiness: {},
+			parsedCategories: [],
+			selectedCategories: new Set(),
 			imagesSelected: new Set(),
 			numImagesFlippedUp: 0,
 			mapOptions:{
@@ -237,39 +240,46 @@ export default {
 			},
 		};
 	},
+
 	computed: {
-		fiveCategories: function() {
-
-			let temp_set = new Set();
-
-			while(temp_set.size < 5) {
-				for(var business in this.businesses) {
-					let temp_category = this.businesses[business].categories[0].title;
-					temp_set.add(temp_category);
-				}
-			}
-
-			return Array.from(temp_set);
-		},
-		filteredBusinesses: function() {
-
-			let temp_list = []
-
-			return this.businesses.slice(0,5);
-		},
 		imagesFlippedUp: function() {
 			return (this.numImagesFlippedUp > 2);
 		}
 	},
+
+	watch: {
+		imagesFlippedUp: function() {
+			let temp_set = new Set();
+			for(var i in this.businesses) {
+				for(var j in this.businesses[i].categories) {
+					let category = this.businesses[i].categories[j].title;
+					console.log("CAT" + category)
+					console.log("THIS" + this.selectedCategories)
+					if(this.selectedCategories.has(category)){
+						console.log("three")
+						temp_set.add(this.businesses[i]);
+						break;
+					}
+				}
+			}
+
+			/* TODO: Add functionality to see more businesses. Remove splice */
+			this.filteredBusinesses = (Array.from(temp_set)).splice(0,5);
+		},
+	},
+
 	mounted() {
 		this.search();
 	},
+
 	methods: {
 		search() {
 			this.zoom = 12;
 			this.searching = true;
 			this.imagesSelected.clear();
+			this.selectedCategories.clear();
 			this.numImagesFlippedUp = 0;
+			this.parsedCategories = [];
 
 			var url = 'http://104.131.185.181/business?';
 			url += 'term=' + this.term + '&';
@@ -297,6 +307,19 @@ export default {
 					this.businesses = JSON.parse(text).businesses; /* .slice(0,5) */
 					this.center = {lat:this.businesses[0].coordinates.latitude, lng:this.businesses[0].coordinates.longitude};
 					this.selectedBusiness = this.businesses[0];
+
+					/* TODO: Modularize this logic: Parse categories from businesses */
+					let temp_set = new Set();
+					for(var business in this.businesses) {
+						let temp_category = this.businesses[business].categories[0].title;
+						temp_set.add(temp_category);
+						if(temp_set.size > 4) {
+							break;
+						}
+					
+					}
+					this.parsedCategories = Array.from(temp_set);
+
 				} catch (err) {
 					this.searching = false;
 					alert('Error: Yelp is busy. Token limit reached? Please try again later.');
@@ -317,10 +340,12 @@ export default {
 		},
 		addSelectedImage(index) {
 			this.imagesSelected.add(index);
+			this.selectedCategories.add(this.parsedCategories[index]);
 			this.numImagesFlippedUp += 1;
 		},
 		removeSelectedImage(index) {
 			this.imagesSelected.delete(index);
+			this.selectedCategories.delete(this.parsedCategories[index]);
 			this.numImagesFlippedUp -= 1;
 		},
 	}
