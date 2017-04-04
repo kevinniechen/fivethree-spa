@@ -41,127 +41,133 @@
 
 		<!-- BUSINESS RESULTS -->
 		<div class="column">
+			<div v-if="!imagesFlippedUp">
+				<h1 class="title is-1">Pick three that seem tasty! :)</h1>
+				<h1 class="subtitle is-6" style="margin-bottom: 2vh">(automatically generated from your location)</h1>
+			</div>
 			<div class="columns">
 				<!-- @click="clickMarker(business)" -->
-				<div class="column" v-for="business,index in businesses">
-					<business-panel :businessData="business" :index="index" :key="index" v-on:addSelection="addSelectedImage(index)" v-on:removeSelection="removeSelectedImage(index)" ></business-panel>
+				<div class="column" v-for="business, index in filteredBusinesses">
+					<business-panel :businessData="business" :categories="fiveCategories" :index="index" :key="index" v-on:addSelection="addSelectedImage(index)" v-on:removeSelection="removeSelectedImage(index)" :imageFlipped="imagesFlippedUp" ></business-panel>
 				</div>
 			</div>
 		</div>
 
-		<!-- STATS -->
-		<!-- <div class="box">
-				<nav class="level">
-				  <div class="level-item has-text-centered">
-					<div>
-						<a :href="selectedBusiness.url" target="_blank">
-						  <p class="heading">Business</p>
-						  <p class="title">{{selectedBusiness.name}}</p>
-					  </a>
-					</div>
-				  </div>
-				  <div class="level-item has-text-centered">
-					<div>
-						<a :href="selectedBusiness.url" target="_blank">
-						  <p class="heading">Address</p>
-						  <p class="title">{{selectedBusiness.location.display_address[0]}}</p>
-					  </a>
-					</div>
-				  </div>
-				  <div class="level-item has-text-centered">
-					<div>
-						<a :href="'tel:' + selectedBusiness.display_phone">
-						  <p class="heading">Phone</p>
-						  <p class="title">{{selectedBusiness.display_phone}}</p>
-					  </a>
-					</div>
-				  </div>
-				  <div class="level-item has-text-centered">
-					<div>
-						<a :href="selectedBusiness.url" target="_blank">
-						  <p class="heading">Reviews</p>
-						  <p class="title">{{selectedBusiness.review_count}}</p>
-						 </a>
-					</div>
-				  </div>
-				</nav>
-		</div> -->
-
 		<!-- MAP -->
 		<div class="column">
-			<gmap-map
-				:center="center"
-				:zoom="zoom"
-				map-type-id="terrain"
-				style="width: 100%; height: 500px;"
-				:options="mapOptions"
-				>
-				 <gmap-marker
-					v-for="business in businesses"
-					:position="{lat:business.coordinates.latitude, lng:business.coordinates.longitude}"
-					:clickable="true"
-					@click="clickMarker(business)"
-					@mouseover="statusBackup = statusText; statusText = business.name"
-					@mouseout="statusText = statusBackup"
-				></gmap-marker>
+			<div class="card">
 
-		  <div slot="visible">
-			<div style="bottom: 2px; left: 2px; background-color: white; color: black; position: absolute; z-index: 100">
-			  {{statusText}}
+				<div class="image-content">
+					<div class="content">
+						<gmap-map
+							:center="center"
+							:zoom="zoom"
+							map-type-id="terrain"
+							style="width: 100%; height: 60vh;"
+							:options="mapOptions"
+							>
+							 <gmap-marker
+								v-for="business in filteredBusinesses"
+								:position="{lat:business.coordinates.latitude, lng:business.coordinates.longitude}"
+								:clickable="true"
+								@click="clickMarker(business)"
+								@mouseover="statusBackup = statusText; statusText = business.name"
+								@mouseout="statusText = statusBackup"
+							></gmap-marker>
+
+						  <div slot="visible" style="width: 50%; margin: 0 auto;">
+							<div style="top: 0px; font-size:3em; background-color: white; color: black; position: absolute; z-index: 100">
+							  {{statusText}}
+							</div>
+						  </div>
+						</gmap-map>
+					</div>
+				</div>
+
+
+				<!-- STATS -->
+				<footer class="card-footer">
+					<p class="card-footer-item">
+						<span>
+							Business:
+						 	<a :href="selectedBusiness.url" target="_blank">{{selectedBusiness.name}}</a>
+					 	</span>
+				  	</p>
+
+					<p class="card-footer-item">
+					  <span>
+					  		Address:
+					  		<a :href="selectedBusiness.url" target="_blank">{{selectedBusiness.location.display_address[0]}}</a>
+					  </span>
+				  	</p>
+
+				  	<p class="card-footer-item">
+						<span>
+							Phone:
+						 	<a :href="'tel:' + selectedBusiness.display_phone" target="_blank">{{selectedBusiness.display_phone}}</a>
+					 	</span>
+				  	</p>
+
+					<p class="card-footer-item">
+						<span>
+							Reviews:
+						 	<a :href="selectedBusiness.url" target="_blank">{{selectedBusiness.review_count}}</a>
+					 	</span>
+				  	</p>
+				</footer>
+
 			</div>
-		  </div>
-
-			</gmap-map>
 		</div>
 
-		<!-- FUN -->
-		<div class="tile is-ancestor">
-  <div class="tile is-vertical is-8">
-	<div class="tile">
+		<!-- TILES -->
+		<div class="column">
+			<div class="tile is-ancestor">
+			  <div class="tile is-vertical is-8">
+				<div class="tile">
 
-	  <div class="tile is-parent is-vertical">
-		<article class="tile is-child notification is-primary">
-		  <p class="title">Vertical...</p>
-		  <p class="subtitle">Top tile</p>
-		</article>
-		<article class="tile is-child notification is-warning">
-		  <p class="title">...tiles</p>
-		  <p class="subtitle">Bottom tile</p>
-		</article>
-	  </div>
+				  <div class="tile is-parent is-vertical">
+					<article class="tile is-child notification is-primary">
+					  <p class="title">Phone</p>
+					  <p class="subtitle">{{selectedBusiness.display_phone}}</p>
+					</article>
+					<article class="tile is-child notification is-warning">
+					  <p class="title">Address</p>
+					  <p class="subtitle">{{selectedBusiness.location.display_address[0]}}</p>
+					</article>
+				  </div>
 
-	  <div class="tile is-parent">
-		<article class="tile is-child notification is-info">
-		  <p class="title">Middle tile</p>
-		  <p class="subtitle">With an image</p>
-		  <figure class="image is-4by3">
-			<img src="http://bulma.io/images/placeholders/640x480.png">
-		  </figure>
-		</article>
-	  </div>
-	</div>
-	<div class="tile is-parent">
-	  <article class="tile is-child notification is-danger">
-		<p class="title">Wide tile</p>
-		<p class="subtitle">Aligned with the right tile</p>
-		<div class="content">
-		  <!-- Content -->
+				  <div class="tile is-parent">
+					<article class="tile is-child notification is-info">
+					  <p class="title">{{selectedBusiness.name}}</p>
+					  <figure class="image is-4by3">
+						<img :src="selectedBusiness.image_url">
+					  </figure>
+					</article>
+				  </div>
+				</div>
+				<div class="tile is-parent">
+				  <article class="tile is-child notification is-danger">
+					<p class="title">Review Count</p>
+					<p class="subtitle">{{selectedBusiness.review_count}}</p>
+					<div class="content">
+
+					</div>
+				  </article>
+				</div>
+			  </div>
+			  <div class="tile is-parent">
+				<article class="tile is-child notification is-success">
+				  <div class="content">
+					<p class="title">Tall tile</p>
+					<p class="subtitle">With even more content</p>
+					<div class="content">
+
+					</div>
+				  </div>
+				</article>
+			  </div>
+			</div>
 		</div>
-	  </article>
-	</div>
-  </div>
-  <div class="tile is-parent">
-	<article class="tile is-child notification is-success">
-	  <div class="content">
-		<p class="title">Tall tile</p>
-		<p class="subtitle">With even more content</p>
-		<div class="content">
-		  <!-- Content -->
-		</div>
-	  </div>
-	</article>
-  </div>
-</div>
 
 	</div>
 
@@ -169,13 +175,11 @@
 
 <script>
 import BusinessPanel from './components/BusinessPanel.vue';
-
 export default {
 	name: 'app',
 	components: {
 		BusinessPanel
 	},
-
 	data () {
 		return {
 			/* Default Location: NYC */
@@ -189,100 +193,10 @@ export default {
 			statusBackup: '',
 			statusText: '',
 			selectedBusiness: {},
-			imagesSelected: [],
+			imagesSelected: new Set(),
+			numImagesFlippedUp: 0,
 			mapOptions:{
-				styles: [
-    {
-        "featureType": "administrative",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "lightness": 33
-            }
-        ]
-    },
-    {
-        "featureType": "landscape",
-        "elementType": "all",
-        "stylers": [
-            {
-                "color": "#f2e5d4"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#c5dac6"
-            }
-        ]
-    },
-    {
-        "featureType": "poi.park",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "lightness": 20
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "all",
-        "stylers": [
-            {
-                "lightness": 20
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#c5c6c6"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#e4d7c6"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#fbfaf7"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "color": "#acbcc9"
-            }
-        ]
-    }
-],
+				styles: [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2e5d4"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]}],
 				scrollwheel: false,
 				navigationControl: false,
 				mapTypeControl: false,
@@ -290,33 +204,43 @@ export default {
 			},
 		};
 	},
-	computed:{
-		selectedImagesString: function(){
-			return null;
-		},
-	},
+	computed: {
+		fiveCategories: function() {
 
+			let temp_set = new Set();
+
+			while(temp_set.size < 5) {
+				for(var business in this.businesses) {
+					let temp_category = this.businesses[business].categories[0].title;
+					temp_set.add(temp_category);
+				}
+			}
+
+			return Array.from(temp_set);
+		},
+		filteredBusinesses: function() {
+
+			let temp_list = []
+
+			return this.businesses.slice(0,5);
+		},
+		imagesFlippedUp: function() {
+			return (this.numImagesFlippedUp > 2);
+		}
+	},
 	mounted() {
 		this.search();
 	},
-
 	methods: {
-
 		search() {
-			this.zoom = 12.01;
+			this.zoom = 12;
 			this.searching = true;
+			this.imagesSelected.clear();
+			this.numImagesFlippedUp = 0;
 
 			var url = 'http://104.131.185.181/business?';
-
 			url += 'term=' + this.term + '&';
 			url += 'location=' + this.location + '&';
-
-			if(this.prevQueryString === url) {
-				this.searching = false;
-				return;
-			} else {
-				this.prevQueryString = url;
-			}
 
 			var xhr = new XMLHttpRequest();
 			if ('withCredentials' in xhr) {
@@ -327,53 +251,44 @@ export default {
 			} else {
 				xhr = null;
 			}
-
 			if (!xhr) {
 				alert('CORS not supported');
 				return;
 			}
-
 			/* Upon response, update business property */
 			xhr.onload = function() {
 				this.searching = false;
-				this.zoom = 12;
+
 				var text = xhr.responseText;
 				try {
-					this.businesses = JSON.parse(text).businesses.slice(0,5);
+					this.businesses = JSON.parse(text).businesses; /* .slice(0,5) */
 					this.center = {lat:this.businesses[0].coordinates.latitude, lng:this.businesses[0].coordinates.longitude};
 					this.selectedBusiness = this.businesses[0];
 				} catch (err) {
 					this.searching = false;
-					alert('Error: Yelp is busy. Please try again later.');
+					alert('Error: Yelp is busy. Token limit reached? Please try again later.');
 				}
 			}.bind(this);
-
 			xhr.onerror = function() {
 				this.searching = false;
-				alert('Error: Yelp is busy. Please try again later.');
+				alert('Error: Yelp is busy. Token limit reached? Please try again later.');
 			}.bind(this);
-
 			xhr.send();
-
 		},
-
 		clickMarker(business) {
 			this.center = {lat:business.coordinates.latitude, lng:business.coordinates.longitude};
-			this.zoom = 14;
 			this.selectedBusiness = business;
 			/* Select business panel */
 		},
-
-		addSelectedImage() {
-
+		addSelectedImage(index) {
+			this.imagesSelected.add(index);
+			this.numImagesFlippedUp += 1;
 		},
-		removeSelectedImage() {
-
-		}
-
-
-	},
-
+		removeSelectedImage(index) {
+			this.imagesSelected.delete(index);
+			this.numImagesFlippedUp -= 1;
+		},
+	}
 };
 </script>
 
@@ -393,21 +308,17 @@ input {
 	text-align: center;
 	color: #2c3e50;
 }
-
 h1, h2 {
 	font-weight: normal;
 }
-
 ul {
 	list-style-type: none;
 	padding: 0;
 }
-
 li {
 	display: inline-block;
 	margin: 0 10px;
 }
-
 a {
 	color: #42b983;
 }

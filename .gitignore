@@ -1,4 +1,5 @@
 # Specifics
+dist/
 .eslintrc.json
 .DS_Store
 
