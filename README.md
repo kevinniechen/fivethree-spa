@@ -4,7 +4,7 @@ SPA Frontend for my submission for the [MindSumo CapitalOne Restaurant Challenge
 ## Deployment
 This is deployed statically on a CDN (Netlify).
 
-[Backend API server](https://github.com/kevchn/threefive-api)
+[Backend API server](https://github.com/kevchn/fivethree-api)
 
 ## Local Deployment
 To run this locally, simply install the requirements and then run npm run dev.
